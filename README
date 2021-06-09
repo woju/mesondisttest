@@ -1,0 +1,38 @@
+This demo project requires meson >= 0.51 to `meson dist`, but afterwards can be
+built from the archive using meson = 0.45.
+
+To create the tarball:
+
+    meson build
+    meson dist -C build --no-tests --include-subprojects --formats=gztar
+    scp build/meson-dist/mesondisttest-*.tar.gz ...
+
+The archive should be copied to a system with older meson. Then:
+
+    tar -xvzf mesondisttest-*.tar.gz
+    cd mesondisttest-*
+    meson build --wrap-mode=nodownload
+
+If, on older meson, you try to configure a build from repo instead of tarball,
+you'll most likely get an error:
+
+    The Meson build system
+    Version: 0.45.1
+    Source dir: /home/woju/test-1.2.3.4
+    Build dir: /home/woju/test-1.2.3.4/build
+    Build type: native build
+    Project name: test
+    Native C compiler: ccache cc (gcc 7.5.0 "cc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0")
+    Build machine cpu family: x86_64
+    Build machine cpu: x86_64
+    Using cJSON-1.7.12 from cache.
+    Package does not require patch.
+
+    Executing subproject cJSON-1.7.12.
+
+
+    meson.build:5:0: ERROR: Missing Meson file in /home/woju/test-1.2.3.4/subprojects/cJSON-1.7.12/meson.build
+
+    A full log can be found at /home/woju/test-1.2.3.4/build/meson-logs/meson-log.txt
+
+This is because the wrap uses patch_directory=, available on meson >= 0.51.
